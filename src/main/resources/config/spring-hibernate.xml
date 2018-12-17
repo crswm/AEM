@@ -27,6 +27,8 @@
             <tx:method name="get*" propagation="SUPPORTS" read-only="true" />
             <tx:method name="load*" propagation="SUPPORTS" read-only="true" />
             <tx:method name="search*" propagation="SUPPORTS" read-only="true" />
+            <tx:method name="find*" propagation="SUPPORTS" read-only="true" />
+
             <!-- 对其他方法应用REQUIRED事务规则 -->
             <tx:method name="*" propagation="REQUIRED" />
         </tx:attributes>
@@ -75,9 +77,9 @@
         </property>
 
         <!-- 指定Mapping信息：注解方式配置 -->
-        <property name="annotatedClasses">
+        <property name="packagesToScan">
             <list>
-                <value>com.crs.entity.User</value>
+                <value>com.crs.entity</value>
             </list>
         </property>
     </bean>

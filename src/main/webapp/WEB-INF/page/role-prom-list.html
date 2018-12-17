@@ -1,0 +1,158 @@
+<!--_meta 作为公共模版分离出去-->
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="renderer" content="webkit|ie-comp|ie-stand">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no" />
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    <link rel="Bookmark" href="../../favicon.ico" >
+    <link rel="Shortcut Icon" href="../../favicon.ico" />
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="../../lib/html5shiv.js"></script>
+    <script type="text/javascript" src="../../lib/respond.min.js"></script>
+    <![endif]-->
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui/css/H-ui.min.css" />
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui.admin/css/H-ui.admin.css" />
+    <link rel="stylesheet" type="text/css" href="../../lib/Hui-iconfont/1.0.8/iconfont.css" />
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui.admin/skin/default/skin.css" id="skin" />
+    <link rel="stylesheet" type="text/css" href="../../static/h-ui.admin/css/style.css" />
+    <!--[if IE 6]>
+    <script type="text/javascript" src="../../lib/DD_belatedPNG_0.0.8a-min.js" ></script>
+    <script>DD_belatedPNG.fix('*');</script>
+    <![endif]-->
+    <!--/meta 作为公共模版分离出去-->
+
+    <title>授权角色</title>
+
+</head>
+<body>
+<article class="page-container">
+    <!--<form  class="form form-horizontal" id="form-member-add">-->
+        <div class="row cl">
+            <label class="form-label col-xs-4 col-sm-3"><span class="c-red"> </span></label>
+            <div class="formControls col-xs-8 col-sm-9">
+                <label><span class="c-primary"><h4>&nbsp;&nbsp;所有菜单</h4></span></label>
+            </div>
+        </div>
+        <div class="row cl" id="">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <div class="content_wrap">
+                    <div class="zTreeDemoBackground left">
+                        <ul id="treeDemo" class="ztree"></ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br><br><br>
+        <div class="row cl">
+            <div class="col-xs-8 col-sm-9 col-xs-offset-4 col-sm-offset-3">
+                <input class="btn btn-primary radius" onclick="addRoleMenu()" id="commit" type="button"  value="&nbsp;&nbsp;提交&nbsp;&nbsp;">
+            </div>
+        </div>
+    <!--</form>-->
+</article>
+
+<!--_footer 作为公共模版分离出去-->
+<script type="text/javascript" src="../../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript" src="../../lib/layer/2.4/layer.js"></script>
+<script type="text/javascript" src="../../static/h-ui/js/H-ui.min.js"></script>
+<script type="text/javascript" src="../../static/h-ui.admin/js/H-ui.admin.js"></script> <!--/_footer 作为公共模版分离出去-->
+
+<!--请在下方写此页面业务相关的脚本-->
+<script type="text/javascript" src="../../My97DatePicker/WdatePicker.js"></script>
+<script type="text/javascript" src="../../lib/jquery.validation/1.14.0/jquery.validate.js"></script>
+<script type="text/javascript" src="../../lib/jquery.validation/1.14.0/validate-methods.js"></script>
+<script type="text/javascript" src="../../lib/jquery.validation/1.14.0/messages_zh.js"></script>
+
+<link rel="stylesheet" href="../../lib/zTree/v3/css/zTreeStyle/zTreeStyle.css" type="text/css">
+<!--<script type="text/javascript" src="../../lib/zTree/v3/api/apiCss/jquery-1.6.2.min.js"></script>-->
+<script type="text/javascript" src="../../lib/zTree/v3/js/jquery.ztree.all-3.5.min.js"></script>
+<script type="text/javascript" src="../../lib/zTree/v3/js/jquery.ztree.core-3.5.js"></script>
+<script type="text/javascript" src="../../lib/zTree/v3/js/jquery.ztree.excheck-3.5.js"></script>
+<script type="text/javascript" src="../../lib/zTree/v3/js/jquery.ztree.exedit-3.5.js"></script>
+
+
+<script type="text/javascript">
+    var setting = {
+        check: {
+            enable: true,
+            chkboxType: {"Y":"s", "N":"ps"}
+        },
+        data: {
+            simpleData: {
+                enable: true
+            }
+        }
+    };
+    var resultStr = "";
+    var resultStr1= "";
+    var code;
+    var roleNum = window.sessionStorage.getItem("roleNum");
+    window.sessionStorage.removeItem("roleNum");
+    var zNodes;
+    window.onload = function () {
+        getmenuList();
+    }
+    function getmenuList(){
+        $.ajax({
+            url:"/crs/findMenuList.do",       //要处理的页面
+            type:"GET",               //提交方式
+            data:{roleNum :roleNum},
+            dataType:"JSON",          //返回的数据类型，TEXT字符串 JSON返回JSON XML返回XML；dataType中T要大写！！
+            success:function(data){          //回调函数，data为形参，是从login-cl.php页面返回的值
+                 zNodes = eval(data);
+                 $.fn.zTree.init($("#treeDemo"), setting, zNodes);
+            }
+        });
+    }
+    function showCode(str) {
+        if (!code) code = $("#code");
+        code.empty();
+        code.append("<li>"+str+"</li>");
+    }
+    function addRoleMenu() {  ///crs/addRoleMenu.do
+        chooseSubmit();
+        $.ajax({
+            url:"/crs/addRoleMenu.do",       //要处理的页面
+            data :{menuStr : resultStr ,roleNum : roleNum },
+            type:"POST",               //提交方式
+            dataType:"JSON",          //返回的数据类型，TEXT字符串 JSON返回JSON XML返回XML；dataType中T要大写！！
+            success:function(data){          //回调函数，data为形参，是从login-cl.php页面返回的值
+                var result = data.result;
+                if (result == 100){
+                    alert("授权成功！");
+                    var index = parent.layer.getFrameIndex(window.name);
+                    parent.$("#btn-refresh").click();
+                    parent.layer.close(index);
+                } else if (result == 101) {
+                    alert("数据库插入失败");
+                }
+            }
+        });
+    }
+    function chooseSubmit() {
+        var zTree = $.fn.zTree.getZTreeObj("treeDemo");
+        //获取勾选框选上的节点
+        var nodes = zTree.getCheckedNodes(true);
+        if (nodes.length == 0) {
+//            alert("请先选择一个节点");
+            return false;
+        }
+
+        for (var i = 0, l = nodes.length; i < l; i++) {
+            if (nodes[i].checked == true) {
+                resultStr += nodes[i].id + ",";
+            }
+        }
+        resultStr = resultStr.substring(0, resultStr.length - 1);
+        if (resultStr == "") {
+//            alert("请先选择一个节点");
+            return false;
+        }
+    }
+</script>
+<!--/请在上方写此页面业务相关的脚本-->
+</body>
+</html>

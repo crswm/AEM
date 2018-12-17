@@ -428,7 +428,7 @@ var ScaleBoy = function () {
                 + '.scale .hand3, .scale .hand4{top:50%;margin-top:-3px;cursor:w-resize;}'
                 + '.scale .hand5, .scale .hand6, .scale .hand7{margin-top:-6px;top:100%;}'
                 + '.scale .hand2, .scale .hand5{cursor:ne-resize;}';
-        style.type = 'text/cssss';
+        style.type = 'text/css';
 
         try {
             style.appendChild(doc.createTextNode(cssText));

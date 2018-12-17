@@ -350,7 +350,7 @@ UE.parse.register('insertcode',function(utils){
                 id : "syntaxhighlighter_css",
                 tag : "link",
                 rel : "stylesheet",
-                type : "text/cssss",
+                type : "text/css",
                 href : cssurl
             });
             utils.loadFile(document,{
@@ -1002,7 +1002,7 @@ UE.parse.register('vedio',function(utils){
                 id : "video_css",
                 tag : "link",
                 rel : "stylesheet",
-                type : "text/cssss",
+                type : "text/css",
                 href : cssurl
             });
             utils.loadFile(document,{

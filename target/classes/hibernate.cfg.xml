@@ -13,7 +13,7 @@
 
       <!-- 注册ORM映射文件 -->
 
-    <mapping class="com.crs.entity.User" />
+    <mapping class="com.crs.entity.prom.User" />
 
   </session-factory>
 
