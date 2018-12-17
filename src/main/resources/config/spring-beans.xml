@@ -12,9 +12,22 @@
     <context:component-scan base-package="com.crs" />
 
     <!--注册一个UserDaoImpl对象，实例名为“userDao”-->
-    <bean id="userDao" class="com.crs.dao.impl.UserDaoImpl"/>
+    <bean id="userDao" class="com.crs.dao.prom.impl.UserDaoImpl"/>
     <bean id="BaseDao" class="com.crs.dao.impl.BaseDaoImpl"></bean>
+    <bean id="RoleDao" class="com.crs.dao.prom.impl.RoleDaoImpl"></bean>
+    <bean id="MenuDao" class="com.crs.dao.prom.impl.MenuDaoImpl"></bean>
+    <bean id="RoleMenuDao" class="com.crs.dao.prom.impl.RoleMenuDaoImpl"></bean>
+
+    <bean id="SellerDao" class="com.crs.dao.seller.impl.SellerDaoImpl"></bean>
+
 
     <!--注册一个UserServiceImpl对象，实例名为“userService”-->
-    <bean id="userService" class="com.crs.service.impl.UserServiceImpl"/>
+    <bean id="userService" class="com.crs.service.prom.impl.UserServiceImpl"/>
+    <bean id="roleService" class="com.crs.service.prom.impl.RoleServiecImpl"/>
+    <bean id="menuService" class="com.crs.service.prom.impl.MenuServiceImpl"/>
+    <bean id="roleMenuService" class="com.crs.service.prom.impl.RoleMenuServiceImpl"/>
+
+    <bean id="sellerService" class="com.crs.service.seller.impl.SellerServiceImpl"/>
+
+
 </beans>

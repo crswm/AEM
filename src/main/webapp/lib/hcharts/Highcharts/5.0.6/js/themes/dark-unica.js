@@ -28,7 +28,7 @@
         Highcharts.createElement('link', {
             href: 'https://fonts.googleapis.com/css?family=Unica+One',
             rel: 'stylesheet',
-            type: 'text/cssss'
+            type: 'text/css'
         }, null, document.getElementsByTagName('head')[0]);
 
         Highcharts.theme = {

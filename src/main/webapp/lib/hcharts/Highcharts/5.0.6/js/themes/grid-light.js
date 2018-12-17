@@ -28,7 +28,7 @@
         Highcharts.createElement('link', {
             href: 'https://fonts.googleapis.com/css?family=Dosis:400,600',
             rel: 'stylesheet',
-            type: 'text/cssss'
+            type: 'text/css'
         }, null, document.getElementsByTagName('head')[0]);
 
         Highcharts.theme = {

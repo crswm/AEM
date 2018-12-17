@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>商家管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layUI/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layUI/style/admin.css" media="all">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <style type="text/css">
+        #container {
+            width: 540px;
+            height: 300px;
+        }
+
+        html,
+        body {
+
+            height: 100%;
+            margin: 0;
+            width: 100%;
+            padding: 0;
+            overflow: hidden;
+            font-size: 13px;
+        }
+
+        .map {
+            height: 100%;
+            width: 60%;
+            float: left;
+        }
+
+        #right {
+            color: #444;
+            background-color: #f8f8f8;
+            width: 40%;
+            float: left;
+            height: 100%;
+        }
+
+        #start,
+        #stop,
+        #right input {
+            margin: 4px;
+            margin-left: 15px;
+        }
+
+        .title {
+            width: 100%;
+            background-color: #dadada
+        }
+
+        button {
+            border: solid 1px;
+            margin-left: 15px;
+            background-color: #dadafa;
+        }
+
+        .c {
+            font-weight: 600;
+            padding-left: 15px;
+            padding-top: 4px;
+        }
+
+        #lnglat,
+        #address,
+        #nearestJunction,
+        #nearestRoad,
+        #nearestPOI,
+        .title {
+            padding-left: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="layui-fluid">
+    <div class="layui-card">
+        <div class="layui-form layui-card-header layuiadmin-card-header-auto">
+            <div class="layui-form-item">
+                <div class="layui-inline">
+                    <label class="layui-form-label">ID</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="id" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input type="text" name="email" placeholder="请输入" autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <label class="layui-form-label">性别</label>
+                    <div class="layui-input-block">
+                        <select name="sex">
+                            <option value="0">不限</option>
+                            <option value="1">男</option>
+                            <option value="2">女</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="layui-inline">
+                    <button class="layui-btn layuiadmin-btn-useradmin" lay-submit lay-filter="LAY-user-front-search">
+                        <i class="layui-icon layui-icon-search layuiadmin-button-btn"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="layui-card-body">
+            <div style="padding-bottom: 10px;">
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="batchdel">删除</button>
+                <button class="layui-btn layuiadmin-btn-useradmin" data-type="add">添加</button>
+            </div>
+
+            <table id="LAY-user-manage" lay-filter="SellerTable"></table>
+            <script type="text/html" id="imgTpl">
+                <img style="display: inline-block; width: 50%; height: 100%;" src={{ d.avatar }}>
+            </script>
+            <script type="text/html" id="workTpl">
+                {{#  if(d.is_work){ }}
+                <input type="checkbox" name="{{d.name}}" value="{{d.id}}" lay-skin="switch" lay-text="营业|打烊"
+                       lay-filter="workTpl" checked="checked"/>
+                {{#  } else { }}
+                <input type="checkbox" name="{{d.name}}" value="{{d.id}}" lay-skin="switch" lay-text="营业|打烊"
+                       lay-filter="workTpl"/>
+                {{#  } }}
+            </script>
+            <script type="text/html" id="delTpl">
+                {{#  if(d.is_del){ }}
+                <input type="checkbox" name="{{d.name}}" value="{{d.id}}" lay-skin="switch" lay-text="激活|废弃"
+                       lay-filter="delTpl" checked="checked"/>
+                {{#  } else { }}
+                <input type="checkbox" name="{{d.name}}" value="{{d.id}}" lay-skin="switch" lay-text="激活|废弃"
+                       lay-filter="delTpl"/>
+                {{#  } }}
+            </script>
+            <script type="text/html" id="optBar">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                        class="layui-icon layui-icon-edit"></i>编辑</a>
+            </script>
+        </div>
+        <!--添加或编辑用户-->
+        <div id="setUser" class="layer_self_wrap" style="width:500px;display:none;">
+            <form id="sellerForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+                <input id="pageNum" type="hidden" name="pageNum"/>
+                <input id="roleIds" type="hidden" name="roleIds"/>
+                <input id="id" type="hidden" name="id"/>
+                <input id="version" type="hidden" name="version"/>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">商家名称</label>
+                    <div class="layui-input-inline">
+                        <input id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input id="mobile" name="mobile" lay-verify="required" autocomplete="off" class="layui-input"
+                               type="text" onkeyup="this.value=this.value.replace(/\D/g,'')"
+                               onafterpaste="this.value=this.value.replace(/\D/g,'')"/>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类型</label>
+                    <div class="layui-input-inline">
+                        <input id="type" name="type" lay-verify="required " autocomplete="off" class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">位置修改</label>
+                    <div class="layui-input-block" id="roleDiv">
+                    </div>
+                </div>
+                <!--高德地图定位-->
+                <div id="container">
+
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">经纬度</label>
+                    <div class="layui-input-inline">
+                        <input id="lnglat" name="type" lay-verify="required " autocomplete="off" class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">地址</label>
+                    <div class="">
+                        <input id="address" name="type" lay-verify="required " autocomplete="off" class=""
+                               type="text"/>
+                    </div>
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">最近的路</label>
+                    <div class="layui-input-inline">
+                        <input id="nearestRoad" name="type" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <!--<div class="layui-form-item">-->
+                <!--<label class="layui-form-label">最近的路口</label>-->
+                <!--<div class="layui-input-inline">-->
+                <!--<input id="nearestJunction" name="type" lay-verify="required " autocomplete="off" class="layui-input"-->
+                <!--type="text"/>-->
+                <!--</div>-->
+                <!--</div>-->
+                <div class="layui-form-item">
+                    <label class="layui-form-label">最近的POI</label>
+                    <div class="layui-input-inline">
+                        <input id="nearestPOI" name="type" lay-verify="required " autocomplete="off" class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <button class="layui-btn" lay-submit="" lay-filter="userSubmit">提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+
+                <!--<div id='right'>-->
+                <!--<div style="display: none">-->
+                <!--<div class='title'>选择模式</div>-->
+                <!--<input type='radio' name='mode' value='dragMap' checked>拖拽地图模式</input>-->
+                <!--</br>-->
+                <!--<input type='radio' name='mode' value='dragMarker'>拖拽Marker模式</input>-->
+                <!--</div>-->
+                <!--<div>-->
+                <!--<button id='start'>开始选点</button>-->
+                <!--<button id='stop'>关闭选点</button>-->
+                <!--</div>-->
+                <!--<div>-->
+                <!--<div class='title'>选址结果</div>-->
+                <!--<div class='c'>经纬度:</div>-->
+                <!--<div id='lnglat'></div>-->
+                <!--<div class='c'>地址:</div>-->
+                <!--<div id='address'></div>-->
+                <!--<div class='c'>最近的路口:</div>-->
+                <!--<div id='nearestJunction'></div>-->
+                <!--<div class='c'>最近的路:</div>-->
+                <!--<div id='nearestRoad'></div>-->
+                <!--<div class='c'>最近的POI:</div>-->
+                <!--<div id='nearestPOI'></div>-->
+                <!--</div>-->
+                <!--</div>-->
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<script src="../../layUI/layui.js"></script>
+<script type="text/javascript" src="../../lib/jquery/1.9.1/jquery.min.js"></script>
+<script type="text/javascript"
+        src="https://webapi.amap.com/maps?v=1.4.11&key=b9a50e7672948b6ebaae74be4a6773b8"></script>
+<script src="//webapi.amap.com/ui/1.0/main.js"></script>
+<script>
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+    layui.config({
+        base: '../../layUI/' //静态资源所在路径
+    }).extend({
+        index: 'lib/index' //主入口模块
+    }).use(['index', 'useradmin', 'table'], function () {
+        var $ = layui.$
+            , form = layui.form
+            , table = layui.table;
+
+        //监听搜索
+        form.on('submit(LAY-user-front-search)', function (data) {
+            var field = data.field;
+
+            //执行重载
+            table.reload('LAY-user-manage', {
+                where: field
+            });
+        });
+
+        //事件
+        var active = {
+            batchdel: function () {
+                var checkStatus = table.checkStatus('LAY-user-manage')
+                    , checkData = checkStatus.data; //得到选中的数据
+
+                if (checkData.length === 0) {
+                    return layer.msg('请选择数据');
+                }
+
+                layer.prompt({
+                    formType: 1
+                    , title: '敏感操作，请验证口令'
+                }, function (value, index) {
+                    layer.close(index);
+
+                    layer.confirm('确定删除吗？', function (index) {
+
+                        //执行 Ajax 后重载
+                        /*
+                        admin.req({
+                          url: 'xxx'
+                          //,……
+                        });
+                        */
+                        table.reload('LAY-user-manage');
+                        layer.msg('已删除');
+                    });
+                });
+            }
+            , add: function () {
+                layer.open({
+                    type: 2
+                    , title: '添加用户'
+                    , content: 'userform.html'
+                    , maxmin: true
+                    , area: ['500px', '450px']
+                    , btn: ['确定', '取消']
+                    , yes: function (index, layero) {
+                        var iframeWindow = window['layui-layer-iframe' + index]
+                            , submitID = 'LAY-user-front-submit'
+                            , submit = layero.find('iframe').contents().find('#' + submitID);
+
+                        //监听提交
+                        iframeWindow.layui.form.on('submit(' + submitID + ')', function (data) {
+                            var field = data.field; //获取提交的字段
+
+                            //提交 Ajax 成功后，静态更新表格中的数据
+                            //$.ajax({});
+                            table.reload('LAY-user-front-submit'); //数据刷新
+                            layer.close(index); //关闭弹层
+                        });
+
+                        submit.trigger('click');
+                    }
+                });
+            }
+        };
+
+        $('.layui-btn.layuiadmin-btn-useradmin').on('click', function () {
+            var type = $(this).data('type');
+            active[type] ? active[type].call(this) : '';
+        });
+    });
+
+    AMapUI.loadUI(['misc/PositionPicker'], function (PositionPicker) {
+        var map = new AMap.Map('container', {
+            zoom: 16,
+            resizeEnable: true,
+            scrollWheel: true
+
+        })
+        var positionPicker = new PositionPicker({
+            mode: 'dragMap',
+            map: map
+        });
+
+        positionPicker.on('success', function (positionResult) {
+            document.getElementById('lnglat').value = positionResult.position;
+            document.getElementById('address').value = positionResult.address;
+            // document.getElementById('nearestJunction').value = positionResult.nearestJunction;
+            document.getElementById('nearestRoad').value = positionResult.nearestRoad;
+            document.getElementById('nearestPOI').value = positionResult.nearestPOI;
+        });
+        positionPicker.on('fail', function (positionResult) {
+            document.getElementById('lnglat').value = ' ';
+            document.getElementById('address').value = ' ';
+            // document.getElementById('nearestJunction').value = ' ';
+            document.getElementById('nearestRoad').value = ' ';
+            document.getElementById('nearestPOI').value = ' ';
+        });
+        var onModeChange = function (e) {
+            positionPicker.setMode(e.target.value)
+        }
+        // var startButton = document.getElementById('start');
+        // var stopButton = document.getElementById('stop');
+        // var dragMapMode = document.getElementsByName('mode')[0];
+        // var dragMarkerMode = document.getElementsByName('mode')[1];
+        // AMap.event.addDomListener(startButton, 'click', function() {
+        //     positionPicker.start(map.getBounds().getSouthWest())
+        // })
+        // AMap.event.addDomListener(stopButton, 'click', function() {
+        //     positionPicker.stop();
+        // })
+        // AMap.event.addDomListener(dragMapMode, 'change', onModeChange)
+        // AMap.event.addDomListener(dragMarkerMode, 'change', onModeChange);
+        positionPicker.start();
+        map.panBy(0, 1);
+        //
+        // map.addControl(new AMap.ToolBar({
+        //     liteStyle: true
+        // }))
+    });
+</script>
+</body>
+</html>

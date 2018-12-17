@@ -3328,7 +3328,7 @@ var domUtils = dom.domUtils = {
      * @return { String } 获取到的样式值
      * @example
      * ```html
-     * <style type="text/cssss">
+     * <style type="text/css">
      *      #test {
      *          font-size: 15px;
      *      }
@@ -6896,7 +6896,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
 
                 var html = ( ie && browser.version < 9  ? '' : '<!DOCTYPE html>') +
                     '<html xmlns=\'http://www.w3.org/1999/xhtml\' class=\'view\' ><head>' +
-                    '<style type=\'text/cssss\'>' +
+                    '<style type=\'text/css\'>' +
                     //设置四周的留边
                     '.view{padding:0;word-wrap:break-word;cursor:text;height:90%;}\n' +
                     //设置默认字体和字号
@@ -6904,7 +6904,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
                     'body{margin:8px;font-family:sans-serif;font-size:16px;}' +
                     //设置段落间距
                     'p{margin:5px 0;}</style>' +
-                    ( options.iframeCssUrl ? '<link rel=\'stylesheet\' type=\'text/cssss\' href=\'' + utils.unhtml(options.iframeCssUrl) + '\'/>' : '' ) +
+                    ( options.iframeCssUrl ? '<link rel=\'stylesheet\' type=\'text/css\' href=\'' + utils.unhtml(options.iframeCssUrl) + '\'/>' : '' ) +
                     (options.initialStyle ? '<style>' + options.initialStyle + '</style>' : '') +
                     '</head><body class=\'view\' ></body>' +
                     '<script type=\'text/javascript\' ' + (ie ? 'defer=\'defer\'' : '' ) +' id=\'_initialScript\'>' +
@@ -7241,7 +7241,7 @@ var fillCharReg = new RegExp(domUtils.fillChar, 'g');
             if (browser.ie && browser.version > 8) {
                 var headHtmlForIE9 = '';
                 utils.each(me.document.styleSheets, function (si) {
-                    headHtmlForIE9 += ( si.href ? '<link rel="stylesheet" type="text/css" href="../../' + si.href + '" />' : '<style>' + si.cssText + '</style>');
+                    headHtmlForIE9 += ( si.href ? '<link rel="stylesheet" type="text/css" href="' + si.href + '" />' : '<style>' + si.cssText + '</style>');
                 });
                 utils.each(me.document.getElementsByTagName('script'), function (si) {
                     headHtmlForIE9 += si.outerHTML;
@@ -8440,7 +8440,7 @@ var filterWord = UE.filterWord = function () {
                         var width = str.match(/width:([ \d.]*p[tx])/i)[1],
                             height = str.match(/height:([ \d.]*p[tx])/i)[1],
                             src =  str.match(/src=\s*"([^"]*)"/i)[1];
-                        return '<img width="'+ transUnit(width) +'" height="'+transUnit(height) +'" src="../../' + src + '" />';
+                        return '<img width="'+ transUnit(width) +'" height="'+transUnit(height) +'" src="' + src + '" />';
                     } catch(e){
                         return '';
                     }
@@ -10849,7 +10849,7 @@ UE.plugin.register('background', function () {
                 } else {
                     url = su != "none" ? su.replace(/url\("?|"?\)/ig, "") : "";
                 }
-                var html = '<style type="text/cssss">body{';
+                var html = '<style type="text/css">body{';
                 var bgObj = {
                     "background-color": domUtils.getComputedStyle(body, "background-color") || "#ffffff",
                     'background-image': url ? 'url(' + url + ')' : '',
@@ -16418,7 +16418,7 @@ UE.plugins['list'] = function () {
                 utils.loadFile(document,{
                     tag : "link",
                     rel : "stylesheet",
-                    type : "text/cssss",
+                    type : "text/css",
                     href : opt.codeMirrorCssUrl || opt.UEDITOR_HOME_URL + "third-party/codemirror/codemirror.css"
                 });
 
@@ -17610,7 +17610,7 @@ UE.plugins['video'] = function (){
                 var ext = url.substr(url.lastIndexOf('.') + 1);
                 if(ext == 'ogv') ext = 'ogg';
                 str = '<video' + (id ? ' id="' + id + '"' : '') + ' class="' + classname + ' video-js" ' + (align ? ' style="float:' + align + '"': '') +
-                    ' controls preload="none" width="' + width + '" height="' + height + '" src="../../' + url + '" data-setup="{}">' +
+                    ' controls preload="none" width="' + width + '" height="' + height + '" src="' + url + '" data-setup="{}">' +
                     '<source src="' + url + '" type="video/' + ext + '" /></video>';
                 break;
         }
@@ -23414,7 +23414,7 @@ UE.commands['insertparagraph'] = {
 //                        ' src="' + me.options.UEDITOR_HOME_URL + 'themes/default/images/spacer.gif" style="background:url(' + obj.logo+') no-repeat center center; border:1px solid gray;" class="edui-faked-webapp" _url="' + obj.url + '" />' +
 //                        (addParagraph ? '</p>' : '')
 //                :
-//                '<iframe class="edui-faked-webapp" title="'+obj.title+'" width="' + obj.width + '" height="' + obj.height + '"  scrolling="no" frameborder="0" src="../../' + obj.url + '" logo_url = '+obj.logo+'></iframe>';
+//                '<iframe class="edui-faked-webapp" title="'+obj.title+'" width="' + obj.width + '" height="' + obj.height + '"  scrolling="no" frameborder="0" src="' + obj.url + '" logo_url = '+obj.logo+'></iframe>';
 //    }
 //
 //    function switchImgAndIframe( img2frame ) {
@@ -23464,7 +23464,7 @@ UE.plugin.register('webapp', function (){
             '<iframe class="edui-faked-webapp" title="'+obj.title+'" ' +
                 (obj.align && !obj.cssfloat? 'align="' + obj.align + '"' : '') +
                 (obj.cssfloat ? 'style="float:' + obj.cssfloat + '"' : '') +
-                'width="' + obj.width + '" height="' + obj.height + '"  scrolling="no" frameborder="0" src="../../' + obj.url + '" logo_url = "'+obj.logo+'"></iframe>'
+                'width="' + obj.width + '" height="' + obj.height + '"  scrolling="no" frameborder="0" src="' + obj.url + '" logo_url = "'+obj.logo+'"></iframe>'
 
     }
     return {
@@ -23703,7 +23703,7 @@ UE.plugin.register('autoupload', function (){
         };
 
         if (filetype == 'image') {
-            loadingHtml = '<img class="loadingclass" id="' + loadingId + '" src="../../' +
+            loadingHtml = '<img class="loadingclass" id="' + loadingId + '" src="' +
                 me.options.themePath + me.options.theme +
                 '/images/spacer.gif" title="' + (me.getLang('autoupload.loading') || '') + '" >';
             successHandler = function(data) {
@@ -23720,7 +23720,7 @@ UE.plugin.register('autoupload', function (){
             };
         } else {
             loadingHtml = '<p>' +
-                '<img class="loadingclass" id="' + loadingId + '" src="../../' +
+                '<img class="loadingclass" id="' + loadingId + '" src="' +
                 me.options.themePath + me.options.theme +
                 '/images/spacer.gif" title="' + (me.getLang('autoupload.loading') || '') + '" >' +
                 '</p>';
@@ -24456,7 +24456,7 @@ UE.plugin.register('simpleupload', function (){
                 var allowFiles = me.getOpt('imageAllowFiles');
 
                 me.focus();
-                me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="../../' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
+                me.execCommand('inserthtml', '<img class="loadingclass" id="' + loadingId + '" src="' + me.options.themePath + me.options.theme +'/images/spacer.gif" title="' + (me.getLang('simpleupload.loading') || '') + '" >');
 
                 function callback(){
                     try{
@@ -24737,7 +24737,7 @@ UE.plugin.register('insertfile', function (){
                         icon = iconDir + getFileIcon(item.url);
                         title = item.title || item.url.substr(item.url.lastIndexOf('/') + 1);
                         html += '<p style="line-height: 16px;">' +
-                            '<img style="vertical-align: middle; margin-right: 2px;" src="../../'+ icon + '" _src="' + icon + '" />' +
+                            '<img style="vertical-align: middle; margin-right: 2px;" src="'+ icon + '" _src="' + icon + '" />' +
                             '<a style="font-size:12px; color:#0066cc;" href="' + item.url +'" title="' + title + '">' + title + '</a>' +
                             '</p>';
                     }
@@ -25227,7 +25227,7 @@ UE.ui = baidu.editor.ui = {};
         getHtmlTpl: function (){
             return '<div id="##" class="edui-popup %%" onmousedown="return false;">' +
                 ' <div id="##_body" class="edui-popup-body">' +
-                ' <iframe style="position:absolute;z-index:-1;left:0;top:0;background-color: transparent;" frameborder="0" width="100%" height="100%" src="../../about:blank"></iframe>' +
+                ' <iframe style="position:absolute;z-index:-1;left:0;top:0;background-color: transparent;" frameborder="0" width="100%" height="100%" src="about:blank"></iframe>' +
                 ' <div class="edui-shadow"></div>' +
                 ' <div id="##_content" class="edui-popup-content">' +
                 this.getContentHtmlTpl() +
@@ -26994,7 +26994,7 @@ UE.ui = baidu.editor.ui = {};
                 contentHtml = this.content;
             } else if (this.iframeUrl) {
                 contentHtml = '<span id="'+ this.id +'_contmask" class="dialogcontmask"></span><iframe id="'+ this.id +
-                    '_iframe" class="%%-iframe" height="100%" width="100%" frameborder="0" src="../../'+ this.iframeUrl +'"></iframe>';
+                    '_iframe" class="%%-iframe" height="100%" width="100%" frameborder="0" src="'+ this.iframeUrl +'"></iframe>';
             }
             return contentHtml;
         },
@@ -27270,7 +27270,7 @@ UE.ui = baidu.editor.ui = {};
                 onshow: function (){
                     if (!this.iframe_rendered) {
                         this.iframe_rendered = true;
-                        this.getDom('content').innerHTML = '<iframe id="'+me.id+'_iframe" src="../../'+ me.iframeUrl +'" frameborder="0"></iframe>';
+                        this.getDom('content').innerHTML = '<iframe id="'+me.id+'_iframe" src="'+ me.iframeUrl +'" frameborder="0"></iframe>';
                         me.editor.container.style.zIndex && (this.getDom().style.zIndex = me.editor.container.style.zIndex * 1 + 1);
                     }
                 }
@@ -27566,7 +27566,7 @@ UE.ui = baidu.editor.ui = {};
             return '<div id="##" class="edui-message %%">' +
             ' <div id="##_closer" class="edui-message-closer">×</div>' +
             ' <div id="##_body" class="edui-message-body edui-message-type-info">' +
-            ' <iframe style="position:absolute;z-index:-1;left:0;top:0;background-color: transparent;" frameborder="0" width="100%" height="100%" src="../../about:blank"></iframe>' +
+            ' <iframe style="position:absolute;z-index:-1;left:0;top:0;background-color: transparent;" frameborder="0" width="100%" height="100%" src="about:blank"></iframe>' +
             ' <div class="edui-shadow"></div>' +
             ' <div id="##_content" class="edui-message-content">' +
             '  </div>' +
@@ -29196,7 +29196,7 @@ UE.ui = baidu.editor.ui = {};
         utils.loadFile(document, {
             href:editor.options.themePath + editor.options.theme + "/css/ueditor.css",
             tag:"link",
-            type:"text/cssss",
+            type:"text/css",
             rel:"stylesheet"
         });
 

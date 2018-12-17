@@ -3495,7 +3495,7 @@ CodeMirror.defineMode("css", function(config) {
     };
 });
 
-CodeMirror.defineMIME("text/cssss", "css");
+CodeMirror.defineMIME("text/css", "css");
 CodeMirror.defineMode("htmlmixed", function(config, parserConfig) {
     var htmlMode = CodeMirror.getMode(config, {name: "xml", htmlMode: true});
     var jsMode = CodeMirror.getMode(config, "javascript");

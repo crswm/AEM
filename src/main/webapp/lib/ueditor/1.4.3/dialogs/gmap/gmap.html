@@ -4,14 +4,14 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
     <title></title>
-    <script type="text/javascript" src="../../../internal.js"></script>
-    <style type="text/cssss">
+    <script type="text/javascript" src="../internal.js"></script>
+    <style type="text/css">
         .content{width:530px; height: 350px;margin: 10px auto;}
         .content table{width: 100%}
         .content table td{vertical-align: middle;}
         #address{width:220px;height:21px;background: #FFF;border:1px solid #d7d7d7; line-height: 21px;}
     </style>
-    <script type="text/javascript" src="../../http://maps.googleapis.com/maps/api/js?sensor=false"></script>
+    <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?sensor=false"></script>
 </head>
 <body>
 <div class="content">
@@ -60,7 +60,7 @@
                 var center = map.getCenter();
                 var point = marker.getPosition();
                 var url = "http://maps.googleapis.com/maps/api/staticmap?center=" + center.lat() + ',' + center.lng() + "&zoom=" + map.zoom + "&size=520x340&maptype=" + map.getMapTypeId() + "&markers=" + point.lat() + ',' + point.lng() + "&sensor=false";
-                editor.execCommand('inserthtml', '<img width="520" height="340" src="../../' + url + '"' + (imgcss ? ' style="' + imgcss + '"' :'') + '/>');
+                editor.execCommand('inserthtml', '<img width="520" height="340" src="' + url + '"' + (imgcss ? ' style="' + imgcss + '"' :'') + '/>');
             };
 
             function getPars(str,par){

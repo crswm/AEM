@@ -566,7 +566,7 @@ function stopDefault(e) {
 					id = n;
 				}
 			} else {
-				$io = $('<iframe name="' + id + '" src="../../' + s.iframeSrc + '" />');
+				$io = $('<iframe name="' + id + '" src="' + s.iframeSrc + '" />');
 				$io.css({
 					position: 'absolute',
 					top: '-1000px',
@@ -2200,7 +2200,7 @@ function stopDefault(e) {
 		*/
 			_createStyles: function() {
 				if (!styleElement.parentNode) {
-					styleElement.type = "text/cssss";
+					styleElement.type = "text/css";
 					document.getElementsByTagName("head")[0].appendChild(styleElement);
 				}
 			},
