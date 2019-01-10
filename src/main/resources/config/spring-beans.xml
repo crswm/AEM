@@ -19,6 +19,8 @@
     <bean id="RoleMenuDao" class="com.crs.dao.prom.impl.RoleMenuDaoImpl"></bean>
 
     <bean id="SellerDao" class="com.crs.dao.seller.impl.SellerDaoImpl"></bean>
+    <bean id="PosDao" class="com.crs.dao.seller.impl.PosDaoImpl"></bean>
+
 
 
     <!--注册一个UserServiceImpl对象，实例名为“userService”-->
@@ -28,6 +30,8 @@
     <bean id="roleMenuService" class="com.crs.service.prom.impl.RoleMenuServiceImpl"/>
 
     <bean id="sellerService" class="com.crs.service.seller.impl.SellerServiceImpl"/>
+    <bean id="posService" class="com.crs.service.seller.impl.PosServiceImpl"/>
+
 
 
 </beans>

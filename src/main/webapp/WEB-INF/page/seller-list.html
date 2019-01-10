@@ -13,7 +13,7 @@
     <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
     <style type="text/css">
         #container {
-            width: 540px;
+            width: 780px;
             height: 300px;
         }
 
@@ -74,6 +74,35 @@
         .title {
             padding-left: 15px;
         }
+        #tip {
+             background-color: #fff;
+             padding-left: 3%;
+            padding-right: 3%;
+            position: fixed;
+             left: 0;
+             top: 0;
+             width: 94%;
+             line-height: 2.5rem;
+            height: 2.5rem;
+           border: none;
+            border-bottom: 1px solid #eee;
+           z-index: 19999;
+            }
+            #tip input{
+            width: 85%;
+            height: 2rem;
+             line-height: 2rem;
+             border: none;
+           outline: none;
+            }
+            #tip span{
+             width: 15%;
+             text-align: center;
+             height: 2.5rem;
+            line-height: 2.5rem;
+             color: #757575;
+              }
+
     </style>
 </head>
 <body>
@@ -152,10 +181,10 @@
             </script>
         </div>
         <!--添加或编辑用户-->
-        <div id="setUser" class="layer_self_wrap" style="width:500px;display:none;">
+        <div id="setUser" class="layer_self_wrap" style="width:600px;display:none;">
             <form id="sellerForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
-                <input id="pageNum" type="hidden" name="pageNum"/>
-                <input id="roleIds" type="hidden" name="roleIds"/>
+                <input id="lng" type="hidden" name="lng"/>
+                <input id="lat" type="hidden" name="lng"/>
                 <input id="id" type="hidden" name="id"/>
                 <input id="version" type="hidden" name="version"/>
                 <div class="layui-form-item">
@@ -183,9 +212,12 @@
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">位置修改</label>
-                    <div class="layui-input-block" id="roleDiv">
+                    <div class="layui-input-block" id="pickerBox">
+                            <input id="pickerInput" placeholder="输入关键字选取地点" />
+                            <div id="poiInfo"></div>
                     </div>
                 </div>
+
                 <!--高德地图定位-->
                 <div id="container">
 
@@ -193,36 +225,69 @@
                 <div style="display: none" class="layui-form-item">
                     <label class="layui-form-label">经纬度</label>
                     <div class="layui-input-inline">
-                        <input id="lnglat" name="type" lay-verify="required " autocomplete="off" class="layui-input"
+                        <input id="lnglat" name="lnglat" lay-verify="required " autocomplete="off" class="layui-input"
                                type="text"/>
                     </div>
                 </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">地址</label>
                     <div class="">
-                        <input id="address" name="type" lay-verify="required " autocomplete="off" class=""
+                        <input id="address" name="address" lay-verify="required " autocomplete="off" class=""
                                type="text"/>
                     </div>
                 </div>
                 <div style="display: none" class="layui-form-item">
                     <label class="layui-form-label">最近的路</label>
                     <div class="layui-input-inline">
-                        <input id="nearestRoad" name="type" lay-verify="required " autocomplete="off"
+                        <input id="nearestRoad" name="nearestRoad" lay-verify="required " autocomplete="off"
                                class="layui-input"
                                type="text"/>
                     </div>
                 </div>
-                <!--<div class="layui-form-item">-->
-                <!--<label class="layui-form-label">最近的路口</label>-->
-                <!--<div class="layui-input-inline">-->
-                <!--<input id="nearestJunction" name="type" lay-verify="required " autocomplete="off" class="layui-input"-->
-                <!--type="text"/>-->
-                <!--</div>-->
-                <!--</div>-->
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">城市</label>
+                    <div class="layui-input-inline">
+                        <input id="city" name="city" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">省</label>
+                    <div class="layui-input-inline">
+                        <input id="province" name="province" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">区</label>
+                    <div class="layui-input-inline">
+                        <input id="region" name="region" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">街道</label>
+                    <div class="layui-input-inline">
+                        <input id="street" name="street" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+                <div style="display: none" class="layui-form-item">
+                    <label class="layui-form-label">街道门号</label>
+                    <div class="layui-input-inline">
+                        <input id="streetNumber" name="streetNumber" lay-verify="required " autocomplete="off"
+                               class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
                 <div class="layui-form-item">
                     <label class="layui-form-label">最近的POI</label>
                     <div class="layui-input-inline">
-                        <input id="nearestPOI" name="type" lay-verify="required " autocomplete="off" class="layui-input"
+                        <input id="nearestPOI" name="nearestPOI" lay-verify="required " autocomplete="off" class="layui-input"
                                type="text"/>
                     </div>
                 </div>
@@ -233,31 +298,7 @@
                     </div>
                 </div>
 
-                <!--<div id='right'>-->
-                <!--<div style="display: none">-->
-                <!--<div class='title'>选择模式</div>-->
-                <!--<input type='radio' name='mode' value='dragMap' checked>拖拽地图模式</input>-->
-                <!--</br>-->
-                <!--<input type='radio' name='mode' value='dragMarker'>拖拽Marker模式</input>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--<button id='start'>开始选点</button>-->
-                <!--<button id='stop'>关闭选点</button>-->
-                <!--</div>-->
-                <!--<div>-->
-                <!--<div class='title'>选址结果</div>-->
-                <!--<div class='c'>经纬度:</div>-->
-                <!--<div id='lnglat'></div>-->
-                <!--<div class='c'>地址:</div>-->
-                <!--<div id='address'></div>-->
-                <!--<div class='c'>最近的路口:</div>-->
-                <!--<div id='nearestJunction'></div>-->
-                <!--<div class='c'>最近的路:</div>-->
-                <!--<div id='nearestRoad'></div>-->
-                <!--<div class='c'>最近的POI:</div>-->
-                <!--<div id='nearestPOI'></div>-->
-                <!--</div>-->
-                <!--</div>-->
+
             </form>
         </div>
 
@@ -268,7 +309,7 @@
 <script type="text/javascript" src="../../lib/jquery/1.9.1/jquery.min.js"></script>
 <script type="text/javascript"
         src="https://webapi.amap.com/maps?v=1.4.11&key=b9a50e7672948b6ebaae74be4a6773b8"></script>
-<script src="//webapi.amap.com/ui/1.0/main.js"></script>
+<script src="https://webapi.amap.com/ui/1.0/main.js"></script>
 <script>
     //JavaScript代码区域
     layui.use('element', function () {
@@ -359,54 +400,62 @@
         });
     });
 
-    AMapUI.loadUI(['misc/PositionPicker'], function (PositionPicker) {
-        var map = new AMap.Map('container', {
-            zoom: 16,
-            resizeEnable: true,
-            scrollWheel: true
+    //
+    // AMapUI.loadUI(['misc/PositionPicker'], function (PositionPicker) {
+    //     var lng = document.getElementById("lng").value;
+    //     var lat = document.getElementById("lat").value;
+    //     //position: new AMap.LngLat(lng,lat),
+    //
+    //
+    //     var map = new AMap.Map('container', {
+    //         zoom: 16,
+    //         resizeEnable: true,
+    //         scrollWheel: true
+    //
+    //     })
+    //     var positionPicker = new PositionPicker({
+    //         // input: 'search',
+    //         // placeSearchOptions: {
+    //         //     map: map,
+    //         //     pageSize: 6 //关联搜索分页
+    //         // }
+    //         // ,
+    //         mode: 'dragMap',
+    //         map: map
+    //     });
+    //
+    //     positionPicker.on('success', function (positionResult) {
+    //         document.getElementById('lnglat').value = positionResult.position;
+    //         document.getElementById('address').value = positionResult.address;
+    //         // document.getElementById('nearestJunction').value = positionResult.nearestJunction;
+    //         document.getElementById('nearestRoad').value = positionResult.nearestRoad;
+    //         document.getElementById('nearestPOI').value = positionResult.nearestPOI;
+    //         document.getElementById('city').value = positionResult.regeocode.addressComponent.city;
+    //         document.getElementById('province').value = positionResult.regeocode.addressComponent.province;
+    //         document.getElementById('region').value = positionResult.regeocode.addressComponent.district;
+    //         document.getElementById('street').value = positionResult.regeocode.addressComponent.street;
+    //         document.getElementById('streetNumber').value = positionResult.regeocode.addressComponent.streetNumber;
+    //
+    //
+    //     });
+    //     positionPicker.on('fail', function (positionResult) {
+    //         document.getElementById('lnglat').value = '';
+    //         document.getElementById('address').value = '';
+    //         // document.getElementById('nearestJunction').value = '';
+    //         document.getElementById('nearestRoad').value = '';
+    //         document.getElementById('nearestPOI').value = '';
+    //     });
+    //
+    //     var onModeChange = function (e) {
+    //         positionPicker.setMode(e.target.value)
+    //     }
+    //
+    //     positionPicker.start();
+    //     map.panBy(0, 1);
+    //
+    //
+    // });
 
-        })
-        var positionPicker = new PositionPicker({
-            mode: 'dragMap',
-            map: map
-        });
-
-        positionPicker.on('success', function (positionResult) {
-            document.getElementById('lnglat').value = positionResult.position;
-            document.getElementById('address').value = positionResult.address;
-            // document.getElementById('nearestJunction').value = positionResult.nearestJunction;
-            document.getElementById('nearestRoad').value = positionResult.nearestRoad;
-            document.getElementById('nearestPOI').value = positionResult.nearestPOI;
-        });
-        positionPicker.on('fail', function (positionResult) {
-            document.getElementById('lnglat').value = ' ';
-            document.getElementById('address').value = ' ';
-            // document.getElementById('nearestJunction').value = ' ';
-            document.getElementById('nearestRoad').value = ' ';
-            document.getElementById('nearestPOI').value = ' ';
-        });
-        var onModeChange = function (e) {
-            positionPicker.setMode(e.target.value)
-        }
-        // var startButton = document.getElementById('start');
-        // var stopButton = document.getElementById('stop');
-        // var dragMapMode = document.getElementsByName('mode')[0];
-        // var dragMarkerMode = document.getElementsByName('mode')[1];
-        // AMap.event.addDomListener(startButton, 'click', function() {
-        //     positionPicker.start(map.getBounds().getSouthWest())
-        // })
-        // AMap.event.addDomListener(stopButton, 'click', function() {
-        //     positionPicker.stop();
-        // })
-        // AMap.event.addDomListener(dragMapMode, 'change', onModeChange)
-        // AMap.event.addDomListener(dragMarkerMode, 'change', onModeChange);
-        positionPicker.start();
-        map.panBy(0, 1);
-        //
-        // map.addControl(new AMap.ToolBar({
-        //     liteStyle: true
-        // }))
-    });
 </script>
 </body>
 </html>
