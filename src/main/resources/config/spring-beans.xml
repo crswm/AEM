@@ -20,6 +20,9 @@
 
     <bean id="SellerDao" class="com.crs.dao.seller.impl.SellerDaoImpl"></bean>
     <bean id="PosDao" class="com.crs.dao.seller.impl.PosDaoImpl"></bean>
+    <bean id="classify_baseDao" class="com.crs.dao.classify.impl.classify_baseDaoImpl"></bean>
+    <bean id="goodsDao" class="com.crs.dao.goods.impl.goodsDaoImpl"></bean>
+     
 
 
 
@@ -31,6 +34,8 @@
 
     <bean id="sellerService" class="com.crs.service.seller.impl.SellerServiceImpl"/>
     <bean id="posService" class="com.crs.service.seller.impl.PosServiceImpl"/>
+    <bean id="classify_baseService" class="com.crs.service.classify.impl.classify_baseServiceImpl"/>
+    <bean id="goodsService" class="com.crs.service.goods.impl.goodsServiceImpl"/>
 
 
 
