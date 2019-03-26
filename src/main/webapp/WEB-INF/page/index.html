@@ -284,12 +284,12 @@
     function loginOut() {
         $.ajax({
             type: "POST",
-            url: "http://localhost:8080/crs/logout.do",
+            url: "/crs/logout.do",
             // data: {},
             dataType: "json",
             success: function (data) {
                 if (data.result == 100) {
-                    window.location.href = "http://localhost:8080/login.do";
+                    window.location.href = "/login.do";
                 }
             }
         });
