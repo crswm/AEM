@@ -30,7 +30,7 @@
     <div class="row cl">
         <label class="form-label col-xs-3"><i class="Hui-iconfont"></i></label>
         <div class="formControls col-xs-8">
-          <span ><h3>&nbsp;&nbsp;&nbsp;&nbsp;海南服务平台登录</h3></span>
+          <span ><h3>&nbsp;&nbsp;&nbsp;&nbsp;乐东扶贫商城平台登录</h3></span>
         </div>
       </div>
       <div class="row cl">
@@ -114,7 +114,7 @@ function login() {
     $("#form1").ajaxForm(function (data) {
         if (data.result == 100) {
             // window.location.href = "http://localhost:8080/crs/index.do";
-            window.location.href = "http://localhost:8080/crs/home.do";
+            window.location.href = "/crs/home.do";
         } else {
             $("#forAlert").show();
         }

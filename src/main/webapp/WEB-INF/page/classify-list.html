@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>类目管理</title>
+    <meta name="renderer" content="webkit">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=0">
+    <link rel="stylesheet" href="../../layUI/css/layui.css" media="all">
+    <link rel="stylesheet" href="../../layUI/style/admin.css" media="all">
+    <link rel="stylesheet" href="https://a.amap.com/jsapi_demos/static/demo-center/css/demo-center.css"/>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <style type="text/css">
+        body {
+            padding: 10px 30px;
+        }
+
+        .hide {
+            display: none
+        }
+        .divcss5{margin:0 auto;border:0px solid #000;width:500px;}
+    </style>
+    <script type="text/javascript">
+        function open(id, title,pid,flag) {
+            //layer.init();
+             if (id == null || id == "") {
+                 a =false;
+            }
+            if (pid != null || pid != "") {
+                $("#pid").val(pid);
+            }
+            if (flag=="new"){
+                $("#new").show();
+            }
+
+            layer.open({
+                type: 1,
+                title: title,
+                fixed: false,
+                resize: false,
+                shadeClose: true,
+                area: ['500px'],
+                content: $('#seClass'),
+                end: function () {
+                    $("#new").hide();
+
+                    location.reload();
+                    // clean();
+
+                }
+            });
+        }
+
+        function getClass(obj, id) {
+            //回显数据
+            $.get("/crs/goods/getClass.do", {"id": id}, function (data) {
+                if (data.msg == "ok" && data.classify != null) {
+
+                    $("#id").val(data.classify.id == null ? '' : data.classify.id);
+                    $("#name").val(data.classify.c_name == null ? '' : data.classify.c_name);
+                    //   $("#c_prarent_id").val(data.classify.pid == null ? '' : data.classify.pid);
+
+                    //location.reload();
+                    open(id, "编辑分类");
+
+                } else {
+                    //弹出错误提示
+                    layer.alert(data.msg, function () {
+                        layer.closeAll();
+                        //location.reload();
+                    });
+                }
+            });
+        }
+        //提交表单
+        function formSubmit(obj) {
+            if ($("#id").val() != null && $("#id").val() != "") {
+                layer.confirm('是否对分类进行修改？', {
+                    btn: ['确认', '返回'] //按钮
+                }, function () {
+                    layer.closeAll();
+                    submitAjax(obj);
+
+                }, function () {
+                    layer.closeAll();//关闭所有弹框
+                    // submitAjax(obj);
+                });
+
+            }
+            if ($("#id").val() == null || $("#id").val() == "") {
+                layer.confirm('是否对新增分类？', {
+                    btn: ['确认', '返回'] //按钮
+                }, function () {
+                    layer.closeAll();
+                    submitAjax(obj);
+
+                }, function () {
+                    layer.closeAll();//关闭所有弹框
+                    // submitAjax(obj);
+                });
+
+            }
+        }
+
+        function submitAjax(obj) {
+            $.ajax({
+                type: "POST",
+                data: $("#classfyForm").serialize(),
+                url: "/crs/goods/editClass.do",
+                success: function (data) {
+                    if (data == "ok") {
+                        layer.alert("操作成功", function () {
+                            layer.closeAll();
+                            //$("#id").val("");
+                            //加载页面
+                            $("#new").hide();
+
+                             load(obj);
+                            //location.reload();
+                        });
+                    } else {
+                        layer.alert(data, function () {
+                            layer.closeAll();
+                            //加载load方法
+                            $("#new").hide();
+
+                            load(obj);//自定义
+                            //location.reload();
+                        });
+                    }
+
+                },
+                error: function () {
+                    layer.alert("操作请求错误，请您稍后再试", function () {
+                        layer.closeAll();
+                        //加载load方法
+                        load(obj);//自定义
+                       // location.reload();
+                    });
+                }
+            });
+        }
+
+        function load(obj) {
+            //重新加载table
+            tableIns.reload({
+                where: obj.field
+            });
+        }
+        function addnew(){
+            open(null,"新增分类",null,"new");
+        }
+    </script>
+</head>
+<body>
+<div style="padding-bottom: 10px;">
+    <!--<button class="layui-btn layuiadmin-btn-useradmin" onclick="delSeller()">删除</button>-->
+    <button class="layui-btn layuiadmin-btn-useradmin" onclick="addnew()">添加</button>
+    <button class="layui-btn layui-btn-primary up-all">全部收起</button>
+    <button class="layui-btn layui-btn-primary down-all">全部展开</button>
+</div>
+
+<script src="../../layUI/layui.js"></script>
+<div class="layui-fluid">
+    <div class="layui-card">
+
+        <div class="layui-card-body">
+            <table class="layui-table layui-form" id="LAY-classify-manage" lay-filter="classifyTable"></table>
+            <script type="text/html" id="imgTpl">
+                <img style="display: inline-block; width: 50%; height: 100%;" src={{ d.avatar }}>
+            </script>
+            <script type="text/html" id="delTpl">
+                {{#  if(d.del){ }}
+                <input type="checkbox" name="{{d.c_name}}" value="{{d.id}}" lay-skin="switch" lay-text="激活|废弃"
+                       lay-filter="delTpl" checked="checked"/>
+                {{#  } else { }}
+                <input type="checkbox" name="{{d.c_name}}" value="{{d.id}}" lay-skin="switch" lay-text="激活|废弃"
+                       lay-filter="delTpl"/>
+                {{#  } }}
+            </script>
+            <script type="text/html" id="optBar">
+                <a class="layui-btn layui-btn-normal layui-btn-xs" lay-event="edit"><i
+                        class="layui-icon layui-icon-edit"></i>编辑</a>
+            </script>
+        </div>
+        <!--添加或编辑用户-->
+        <div id="seClass" class= "layer_self_wrap  "  style="width:500px;display:none;">
+            <form id="classfyForm" class="layui-form layui-form-pane" method="post" action="" style="margin-top: 20px;">
+                <input id="id" type="hidden" name="id"/>
+                <input id="pid" type="hidden" name="pid"/>
+
+                <div id="new" class="layui-form-item" style="display:none;">
+                    <label class="layui-form-label">父节点</label>
+                    <div class="layui-input-inline">
+                        <input id="c_prarent_id" name="c_prarent_id" lay-verify="required " autocomplete="off" class="layui-input"
+                               type="number"/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <label class="layui-form-label">类目名称</label>
+                    <div class="layui-input-inline">
+                        <input id="name" name="name" lay-verify="required" autocomplete="off" class="layui-input"
+                               type="text"/>
+                    </div>
+                </div>
+
+                <div class="layui-form-item">
+                    <div class="layui-input-block" style="margin-left: 10px;">
+                        <button class="layui-btn" lay-submit="" lay-filter="userSubmit">提交</button>
+                        <button type="reset" class="layui-btn layui-btn-primary">重置</button>
+                    </div>
+                </div>
+
+
+            </form>
+        </div>
+
+    </div>
+</div>
+
+<button class="layui-btn layui-btn-primary up-all">全部收起</button>
+<button class="layui-btn layui-btn-primary down-all">全部展开</button>
+<!--<button class="layui-btn layui-btn-primary get-checked">获取选中</button>-->
+<script src="../../layUI/layui.js"></script>
+<script type="text/javascript" src="../../lib/jquery/1.9.1/jquery.min.js"></script>
+<script>
+
+    layui.config({
+        base: '../../layUI/js/',
+    })
+
+
+    layui.use(['treetable', 'form'], function () {
+        //getData();
+        //var data=[{"id":1,"pid":0,"title":"1-1"},{"id":2,"pid":0,"title":"1-2"},{"id":3,"pid":0,"title":"1-3"},{"id":4,"pid":1,"title":"1-1-1"},{"id":5,"pid":1,"title":"1-1-2"},{"id":6,"pid":2,"title":"1-2-1"},{"id":7,"pid":2,"title":"1-2-3"},{"id":8,"pid":3,"title":"1-3-1"},{"id":9,"pid":3,"title":"1-3-2"},{"id":10,"pid":4,"title":"1-1-1-1"},{"id":11,"pid":4,"title":"1-1-1-2"}];
+        var mdata ;
+        $.ajax({
+            url: "/crs/goods/classifyList.do",       //要处理的页面
+            type: "POST",               //提交方式
+            async:false,
+            // data: {"id": id, "is_del": is_del, "name": name},
+            dataType: "json",          //返回的数据类型，TEXT字符串 JSON返回JSON XML返回XML；dataType中T要大写！！
+            success: function (data) {          //回调函数，data为形参，是从login-cl.php页面返回的值
+                if (data == null) {
+                    layer.msg('获取数据失败');
+                    mdata = null;
+                } else {
+                    mdata = data.classifyList;
+                }
+            }
+        });
+
+
+
+        var o = layui.$, treetable = layui.treetable;
+        var form = layui.form, layer = layui.layer;
+        treetable.render({
+            elem: '#LAY-classify-manage',
+            data: mdata,
+            field: 'c_name',
+            is_checkbox: true,
+            //checked:[1,2,3,4],
+            // icon_val: { xe621   xe602  xe61a
+            //     open: "&#xe603;",
+            //     close: "&#xe602;"
+            // },
+            space: 4,
+            cols: [
+                {
+                    field: 'c_name',
+                    title: '类目',
+                    width: '30%',
+                    template: function (item) {
+                        if (item.level == 1) {
+                            return '<span style="color:red;">' + item.c_name + '</span>';
+                        }
+                        if (item.level == 2) {
+                            return '<span style="color:green;">' + item.c_name + '</span>';
+                        }
+                        return item.c_name;
+                    }
+                },
+                {
+                    field: 'id',
+                    title: 'ID',
+                    width: '15%'
+                },
+                {
+                    title: '状态',
+                    width: '10%',
+                    template: function (item) {
+                        return '<input type="checkbox" lay-skin="switch" lay-filter="status" lay-text="显示|关闭">';
+                    }
+                },
+                {
+                    field: 'pid',
+                    title: '父ID',
+                    width: '15%',
+                },
+                {
+                    field: 'actions',
+                    title: '操作',
+                    width: '20%',
+                    template: function (item) {
+                        var tem = [];
+                       // if (item.level <= 3) {
+                        tem.push('<a class="add-child" lay-filter="add" lay-event="add">添加子级</a>');
+                      // }
+                        tem.push('<a lay-filter="edit" lay-event="edit">编辑</a>');
+                        tem.push('<a lay-filter="del" lay-event="del">删除</a>');
+                        // if (item.pid > 0) {
+                        //     tem.push('<a class="set-attr">设置属性</a>');
+                        // }
+                        return tem.join(' <font>|</font> ')
+                    },
+                },
+            ]
+        });
+
+
+        // //监听工具条
+        // treetable.on('tool(classifyTable)', function (obj) {
+        //     var data = obj.data;
+        //     if (obj.event === 'del') {
+        //         // del(data,data.id,data.name);
+        //     } else if (obj.event === 'edit') {
+        //         getClass(data, data.id);
+        //     }
+        // });
+
+
+
+        treetable.on('treetable(add)', function (data) {
+            layer.msg('添加操作');
+            open(null,"新增子分类",data.item.id)
+            console.dir(data);
+        })
+
+
+        treetable.on('treetable(edit)', function (data) {
+            layer.msg('编辑操作');
+            getClass(data, data.item.id);
+            console.dir(data);
+
+            //open(data.item.id,"编辑类目")
+        })
+
+        treetable.on('treetable(del)', function (obj) {
+            var a=confirm("确定删除吗？");
+            if (a){
+                $.ajax({
+                    type: "POST",
+                    data: {"id" : obj.item.id},
+                    url: "/crs/goods/del.do",
+                    success: function (data) {
+                        if (data == "ok") {
+                            layer.alert("删除成功", function () {
+
+                                layer.closeAll();
+                                //$("#id").val("");
+                                //加载页面
+                                //load(form);
+                                location.reload();
+                            });
+                        } else {
+                            layer.alert(data, function () {
+                                layer.closeAll();
+                                //加载load方法
+                                //load(form);//自定义
+                                location.reload();
+                            });
+                        }
+
+                    },
+                    error: function () {
+                        layer.alert("操作请求错误，请您稍后再试", function () {
+                            layer.closeAll();
+                            //加载load方法
+                            ///load(form);//自定义
+                            location.reload();
+                        });
+                    }
+                });
+            }
+
+            //open(data.item.id,"编辑类目")
+        })
+
+        o('.up-all').click(function () {
+            treetable.all('up');
+        })
+
+        o('.down-all').click(function () {
+            treetable.all('down');
+        })
+
+        o('.get-checked').click(function () {
+            console.dir(treetable.all('checked'));
+        })
+
+        form.on('switch(status)', function (data) {
+            layer.msg('监听状态操作');
+            console.dir(data);
+            var id = o(this).parents('tr').data("id");
+
+        })
+        //监听提交
+        form.on('submit(userSubmit)', function (data) {
+            // TODO 校验
+            formSubmit(data);
+            return false;
+        });
+    })
+
+
+
+
+
+
+</script>
+</body>
+</html>

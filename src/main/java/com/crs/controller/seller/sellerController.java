@@ -207,31 +207,56 @@ public class sellerController {
         String region = request.getParameter("region");
         String street = request.getParameter("street");
         String streetNumber = request.getParameter("streetNumber");
-
-        Seller seller = sellerService.findSeller(Integer.parseInt(id));
-        seller.setName(name);
-        seller.setMobile(mobile);
-        seller.setType(type);
-        List<Position> positions = posService.findBySellerId(Integer.parseInt(id));
-        Position p = positions.get(0);
-        p.setAddress(address);
-        p.setLatitude(Double.parseDouble(lnglat.split(",")[1]));
-        p.setLongitude(Double.parseDouble(lnglat.split(",")[0]));
-        p.setProvince(province);
-        p.setCity(city);
-        p.setRegion(region);
-        p.setStreet(street);
-        p.setStreetNumber(streetNumber);
-
-
+        Object user = request.getSession().getAttribute(Global.LOGIN_USER);
+        User u = (User) user;
         try {
-            boolean a = sellerService.update(seller);
-            boolean b = posService.update(p);
-            if (a && b) {
+            if (!id.equals("") && id != null) {
+                Seller seller = sellerService.findSeller(Integer.parseInt(id));
+                seller.setName(name);
+                seller.setMobile(mobile);
+                seller.setType(type);
+                List<Position> positions = posService.findBySellerId(Integer.parseInt(id));
+                Position p = positions.get(0);
+                p.setAddress(address);
+                p.setLatitude(Double.parseDouble(lnglat.split(",")[1]));
+                p.setLongitude(Double.parseDouble(lnglat.split(",")[0]));
+                p.setProvince(province);
+                p.setCity(city);
+                p.setRegion(region);
+                p.setStreet(street);
+                p.setStreetNumber(streetNumber);
+                boolean a = sellerService.update(seller);
+                boolean b = posService.update(p);
+                if (a && b) {
+                    msg = "ok";
+                } else {
+                    msg = "fail";
+                }
+            }else {//新增
+                Seller seller = new Seller();
+                seller.setName(name);
+                seller.setMobile(mobile);
+                seller.setType(type);
+                seller.setIs_del(false);
+                seller.setIs_work(false);
+                seller.setUserId(u.getId().toString());
+                seller.setUserName(u.getUserName());
+                sellerService.add(seller);
+                Position p = new Position();
+                p.setSeller_id(seller.getId().toString());
+                p.setAddress(address);
+                p.setLatitude(Double.parseDouble(lnglat.split(",")[1]));
+                p.setLongitude(Double.parseDouble(lnglat.split(",")[0]));
+                p.setProvince(province);
+                p.setCity(city);
+                p.setRegion(region);
+                p.setStreet(street);
+                p.setStreetNumber(streetNumber);
+                posService.add(p);
                 msg = "ok";
-            }else {
-                msg = "fail";
             }
+
+
         } catch (Exception e) {
             e.printStackTrace();
             msg = "操作异常，请您稍后再试！";
@@ -252,7 +277,7 @@ public class sellerController {
         Map<String, Object> resultMap = new HashMap<String, Object>();
         if (seller != null) {
             resultMap.put("seller", seller);
-            resultMap.put("p",p);
+            resultMap.put("p", p);
             resultMap.put("msg", "ok");
         } else {
             resultMap.put("msg", "fail");

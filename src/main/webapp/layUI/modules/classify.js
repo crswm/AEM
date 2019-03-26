@@ -3,25 +3,26 @@
     var t = layui.$, i = layui.table, form = layui.form;
     layui.form;
     tableIns = i.render({
-        elem: "#LAY-user-manage",
-        url: "/crs/seller/sellerList.do",
+        elem: "#LAY-classify-manage",
+        url: "/crs/goods/classifyList.do",
         method: 'POST',//默认：get请求
         page: true,
         response: {
             statusName: 'code', //数据状态的字段名称，默认：code
             statusCode: 200, //成功的状态码，默认：0
             // countName: 'totals', //数据总数的字段名称，默认：count
-            dataName: 'sellerList' //数据列表的字段名称，默认：data
+            dataName: 'classifyList' //数据列表的字段名称，默认：data
         },
         cols: [[
             {type: "checkbox", fixed: "left"},
             {field: "id", width: 100, title: "ID", sort: !0},
-            {field: "name", title: "商家名称", minWidth: 100}, // {field: "avatar", title: "头像", width: 100, templet: "#imgTpl"},
-            {field: "mobile", title: "手机"},
-            {field: "userName", title: "用户名称"},
-            {field: "type", title: "类型"},
-            {field: "is_work", title: "营业", templet: '#workTpl'},
-            {field: "is_del", title: "激活", templet: '#delTpl'},
+            {field: "c_name", title: "类目名称", minWidth: 100}, // {field: "avatar", title: "头像", width: 100, templet: "#imgTpl"},
+            {field: "c_prarent_id", title: "父节点"},
+            {field: "level", title: "层次"},
+            {field: "create_date", title: "创建日期", templet: '<div>{{ layui.laytpl.toDateString(d.create_date) }}</div>'},
+            {field: "update_date", title: "更新日期", templet: '<div>{{ layui.laytpl.toDateString(d.update_date) }}</div>'},
+            {field: "updator", title: "更新人"},
+            {field: "del", title: "启用", templet: '#delTpl'},
             // {field: "jointime", title: "加入时间", sort: !0},
             {fixed: 'right', title: '操作', width: 140, align: 'center', toolbar: '#optBar'}
             // {title: "操作", width: 150, align: "center", fixed: "right"}
@@ -33,12 +34,11 @@
     });
 
     //监听工具条
-    i.on('tool(SellerTable)', function (obj) {
+    i.on('tool(classifyTable)', function (obj) {
         var data = obj.data;
         if (obj.event === 'del') {
             // del(data,data.id,data.name);
         } else if (obj.event === 'edit') {
-
             getSeller(data, data.id);
         } else if (obj.event === 'recover') {
             //恢复
@@ -58,11 +58,11 @@
         var is_del = checked ? 1 : 0;
         var isDel = checked ? "激活" : "废弃";
         //是否离职
-        layer.confirm('您确定要把用户：' + name + '设置为' + isDel + '状态吗？', {
+        layer.confirm('您确定要把分类：' + name + ' 设置为' + isDel + '状态吗？', {
             btn: ['确认', '返回'] //按钮
         }, function () {
             $.ajax({
-                url: "/crs/seller/setIsDel.do",       //要处理的页面
+                url: "/crs/goods/setIsDel.do",       //要处理的页面
                 type: "POST",               //提交方式
                 data: {"id": id, "is_del": is_del, "name": name},
                 dataType: "text",          //返回的数据类型，TEXT字符串 JSON返回JSON XML返回XML；dataType中T要大写！！
@@ -157,7 +157,7 @@ function getSeller(obj, id) {
             $("#address").val(data.p.address);
             $("#pickerInput").val("");
             dw();
-             //location.reload();
+            //location.reload();
             open(id, "编辑商家");
 
         } else {
@@ -171,32 +171,36 @@ function getSeller(obj, id) {
     //dw();
 }
 
-function open(id, title) {
+
+function open(id, title,pid) {
     //layer.init();
     if (id == null || id == "") {
         $("#id").val("");
     }
-
+    if (pid != null || pid != "") {
+        $("#pid").val(pid);
+    }
     layer.open({
         type: 1,
         title: title,
         fixed: false,
         resize: false,
         shadeClose: true,
-        area: ['800px'],
-        content: $('#setUser'),
+        area: ['500px'],
+        content: $('#seClass'),
         end: function () {
             location.reload();
-            clean();
+            // clean();
 
         }
     });
 }
 
+
 //提交表单
 function formSubmit(obj) {
     if ($("#id").val() != null && $("#id").val() != "") {
-        layer.confirm('是否对商家进行修改？', {
+        layer.confirm('是否对分类进行修改？', {
             btn: ['确认', '返回'] //按钮
         }, function () {
             layer.closeAll();
@@ -204,12 +208,12 @@ function formSubmit(obj) {
 
         }, function () {
             layer.closeAll();//关闭所有弹框
-           // submitAjax(obj);
+            // submitAjax(obj);
         });
 
     }
     if ($("#id").val() == null || $("#id").val() == "") {
-        layer.confirm('是否对新增商家？', {
+        layer.confirm('是否对新增分类？', {
             btn: ['确认', '返回'] //按钮
         }, function () {
             layer.closeAll();
@@ -226,8 +230,8 @@ function formSubmit(obj) {
 function submitAjax(obj) {
     $.ajax({
         type: "POST",
-        data: $("#sellerForm").serialize(),
-        url: "/crs/seller/editSeller.do",
+        data: $("#classfyForm").serialize(),
+        url: "/crs/goods/editClass.do",
         success: function (data) {
             if (data == "ok") {
                 layer.alert("操作成功", function () {
@@ -259,9 +263,9 @@ function submitAjax(obj) {
 }
 
 function clean() {
-    $("#name").val("");
-    $("#mobile").val("");
-    $("#type").val("");
+    // $("#name").val("");
+    // $("#mobile").val("");
+    // $("#type").val("");
     // $("#password").val("");
 }
 
@@ -383,9 +387,41 @@ function poiPickerReady(poiPicker,map) {
     //     //poiPicker.suggest('美食');
     // });
 }
-
-//开通用户
-function addSeller(){
-    dw();
-    open(null,"新增商家");
+function addnew(){
+    $("#new").show();
+    open(null,"新增分类");
+    $("#new").hide();
 }
+//时间戳的处理
+layui.laytpl.toDateString = function(d, format){
+    var date = new Date(d || new Date())
+        ,ymd = [
+        this.digit(date.getFullYear(), 4)
+        ,this.digit(date.getMonth() + 1)
+        ,this.digit(date.getDate())
+    ]
+        ,hms = [
+        this.digit(date.getHours())
+        ,this.digit(date.getMinutes())
+        ,this.digit(date.getSeconds())
+    ];
+
+    format = format || 'yyyy-MM-dd HH:mm:ss';
+
+    return format.replace(/yyyy/g, ymd[0])
+        .replace(/MM/g, ymd[1])
+        .replace(/dd/g, ymd[2])
+        .replace(/HH/g, hms[0])
+        .replace(/mm/g, hms[1])
+        .replace(/ss/g, hms[2]);
+};
+//数字前置补零
+layui.laytpl.digit = function(num, length, end){
+    var str = '';
+    num = String(num);
+    length = length || 2;
+    for(var i = num.length; i < length; i++){
+        str += '0';
+    }
+    return num < Math.pow(10, length) ? str + (num|0) : num;
+};
